@@ -43,26 +43,12 @@ const Details = () => {
     // eslint-disable-next-line
   },[isApproving,fiatContract, account, fractionalTokenAddress, attempts])
 
-  // const loader =  () => {
-  //   setTimeout(async() => {
-  //     console.log("contractProvider: ", contractProvider)
-  //     console.log("attempts: ", attempts)
-  //     if(contractProvider){
-  //       await getDetails()
-  //     }else if(attempts<15){ setAttempts(attempts+1) }
-  //   },500)
-  // }
-
   const getDetails = async() => {
       // GET FULL PATH CONTAINING THE CID OR URI
-      console.log("contractProvider at getDetails: ", contractProvider)
       if(contractProvider!=="") {
         const uriPath = await contractProvider.tokenURI(id)
         const fractionalTokenAddress = await contractProvider.AddressOfErc20AssociatedToNFTid(id)
         setFractionalTokenAddress(fractionalTokenAddress)
-        // const tokenAddress = await contractProvider.AddressOfErc20AssociatedToNFTid(id)
-        // setTokenAddress(tokenAddress)
-        // console.log("tokenAddress: ", tokenAddress)
 
         const properties = []
         const info = await axios.get(uriPath, readHeader)
@@ -73,43 +59,8 @@ const Details = () => {
 
   }
 
-  // const buy2 = async() => {
-  //   // To buy, user has to approve and pay the corresponding usdt or stable token to the smart contract
-  //   // 
-  //   try {
-  //     // const addressNftizer = info[networkName]["Nftizer"].address
-
-  //     const abiFractionalizer = info[networkName]["Fractionalizer"].abi
-  //     // const addressFractionalizer = info[network]["Fractionalizer"].address
-      
-  //     const tokenContract = getContract(tokenAddress, abiFractionalizer, "signer")
-      
-  //     const fiatTokenAddress = tokens[networkName]["USDT"].address
-  //     const ERC20abi = tokens["ERC20abi"]
-  //     const fiatContract = getContract(fiatTokenAddress, ERC20abi, "signer")
-  //     const decimals = await fiatContract.decimals()
-      
-  //     const fiatAmount = priceInUsdtForTokens()*10**decimals
-  //     console.log("fiatAmount: ", fiatAmount)
-  //     await fiatContract.approve(tokenAddress, fiatAmount.toString())
-      
-      
-      
-  //     // console.log("abi: ", abiFractionalizer)
-  //     // console.log("tokenContract: ", tokenContract)
-  //     // console.log("addressNftizer: ", addressNftizer)
-  //     const decimalsToken = await tokenContract.decimals()
-  //     const scaleNumTokens = numTokens*10**decimalsToken
-  //     const scalePriceInUsdtForTokens = priceInUsdtForTokens()*10**decimals
-  //     await tokenContract.buy(scaleNumTokens.toString(), scalePriceInUsdtForTokens.toString())      
-  //   } catch (error) { 
-  //   }
-  // }
-
   const getFiatInfo = async () => {
-    console.log("account at getFiatInfo: ", account)
     if(networkName!=="" && account!=="" && account){
-      console.log("networkName: ", networkName)
       const fiatTokenAddress = tokens[networkName]["USDT"].address
       const ERC20abi = tokens["ERC20abi"]
       const fiatContract = getContract(fiatTokenAddress, ERC20abi, "signer")
@@ -145,8 +96,6 @@ const Details = () => {
     if(isApproving && fiatContract && account && account!=="" && fractionalTokenAddress){
       let allowance = await fiatContract.allowance(account, fractionalTokenAddress)
       allowance = BigNumber.from(allowance["_hex"]).toString()
-      console.log("allowance: ", allowance)
-      console.log("fiatAmount at :", fiatAmount)
       if(allowance >= fiatAmount){
         setIsApproving(false)
         try {
@@ -178,11 +127,6 @@ const Details = () => {
     const totalTokensMinted = propertyInfo[0]?.numTokens
     const pricePerToken = askingPrice/totalTokensMinted
     const priceOftokens = pricePerToken*numTokens
-    // console.log("askingPrice :", askingPrice)
-    // console.log("totalTokensMinted :", totalTokensMinted)
-    // // console.log(" :", )
-    // // console.log(" :", )
-    // console.log("priceOftokens: ", priceOftokens)
     return priceOftokens
   }
 

@@ -7,28 +7,6 @@ import { useAccount } from '../context/account';
 const Navbar = () => {
   const { account, connectWallet } = useAccount()
 
-  // useEffect(() => {
-  //   checkNetwork()
-  // },[attemps])
-
-  // const loader = () => {
-  //   setTimeout( async()=> {
-
-  //   },500)
-  // }
-
-  // const checkNetwork = async() => {
-  //   const defaultWorkingNetwork = "maticmum"
-  //   console.log("network: ", network)
-  //   if(network){
-  //     console.log("info[network]: ", info[network])
-  //     if(!info[network]){
-  //       await window.ethereum.request({method:"wallet_SwitchEthereumChain", params:[{chainId: chainId[defaultWorkingNetwork]}]})
-  //     }
-  //   }
-  // }
-
-
   return (
     <div className='flex flex-col'>
       

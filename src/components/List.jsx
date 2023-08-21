@@ -93,7 +93,6 @@ const List = () => {
     try {
     if (!imageFile) return;
       const cid = await sendFileToIPFS(imageFile);
-      console.log("cid: ", cid)
       
       const ipfsImagePath ="https://" + process.env.REACT_APP_IPFSGATEWAY + "/ipfs/" + cid + "?pinataGatewayToken=" + process.env.REACT_APP_ACCESS_TOKEN_1;
       const tempInfo = { ...info };
@@ -112,7 +111,6 @@ const List = () => {
           propertyInfo: tempInfo,
         },
       });
-      console.log("tempInfo: ", tempInfo);
       const sendFile = await axios.post(url, data, sendJsonHeader);
       const hash = sendFile.data.IpfsHash;
       const ipfsJSONPath =
@@ -153,15 +151,11 @@ const List = () => {
     ) {
       return console.log("some empty field")
     }
-    console.log("listinGG...")
     const uri = await sendJSONToIPFS(propertyInfo);
-    console.log("uri: ", uri);
 
     const numTokens = propertyInfo.numTokens
-    console.log("numTokens: ", numTokens)
 
     const usdt = tokens[networkName]["USDT"]["address"]
-    console.log("usdt: ", usdt)
 
     const address = info[networkName]["Nftizer"].address
     const abi = info[networkName]["Nftizer"].abi
@@ -170,8 +164,7 @@ const List = () => {
 
     if(contractSigner && contractSigner!=="" && uri){
       try {
-        const houseMinter =  await contractSigner.safeMint(uri, numTokens.toString(), usdt)
-        console.log(houseMinter)        
+        const houseMinter =  await contractSigner.safeMint(uri, numTokens.toString(), usdt)   
       } catch (error) {
         console.log(error)
       }

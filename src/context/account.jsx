@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { ethers } from 'ethers'
 import info from '../constants/info.json'
 import chainId from '../constants/chainId.json'
+import axios from 'axios'
+import { usePinataContext } from "../constants/pinataContext";
 
 const accountContext = createContext()
 export const useAccount = () => {
@@ -9,17 +11,29 @@ export const useAccount = () => {
 }
 
 export const AccountContextProvider = ({children}) => {
+  const { readHeader, getHeader, filter } = usePinataContext()
+
   const [account, setAccount] = useState("");
   const [contractProvider, setContractProvider] = useState("");
   const [contractSigner, setContractSigner] = useState("");
   const [networkName, setNetworkName] = useState("");
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(true);
+  const [propertiesFromContext, setPropertiesFromContext] = useState([]);
 
   useEffect(() => {
     // loader()
     isWalletConnected()
     // eslint-disable-next-line
   },[])
+
+  useEffect(() => {
+    readFileFromIPFS()
+    // eslint-disable-next-line
+  },[])
+
+  // useEffect(() => {
+  //   console.log("propertiesFromContext: ", propertiesFromContext)
+  // },[propertiesFromContext])
 
   const connectWallet = async() => {
     if(!window.ethereum) return setIsMetamaskInstalled(false)
@@ -76,6 +90,46 @@ export const AccountContextProvider = ({children}) => {
     }    
   }
 
+
+  // GET LISTINGS FROM PINATA
+  const getImageCIDFromIPFS = async() => {
+    try {
+      const queryFilter = "metadata[name]=" + filter
+      const url = "https://api.pinata.cloud/data/pinList?" + queryFilter
+      const fetchFile = await axios.get(url, getHeader)
+
+      const response = fetchFile.data.rows
+      const output = response.map((value) => {
+        let getCid = value.ipfs_pin_hash
+        return getCid
+      })
+      return output
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+
+  const readFileFromIPFS = async() => {
+    try {
+      const output = await getImageCIDFromIPFS()
+      const listArray = []
+      for (let i = 0; i < output.length; i++) {
+        const value = output[i];
+        const ipfsPath = "https://" + process.env.REACT_APP_IPFSGATEWAY + "/ipfs/" + value + "?pinataGatewayToken=" + process.env.REACT_APP_ACCESS_TOKEN_1
+        const info = await axios.get(ipfsPath, readHeader)
+        const propertyInfo = info.data.propertyInfo
+        if(propertyInfo && propertyInfo.filter === filter)
+          listArray.push(propertyInfo)
+      }
+      // setListings(listArray)  
+      setPropertiesFromContext(listArray.reverse().slice(0,4))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const getNetwork = async() => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -102,7 +156,7 @@ export const AccountContextProvider = ({children}) => {
     }
   }
 
-  const data = {account, networkName, contractProvider, contractSigner, isMetamaskInstalled, connectWallet, getContract}
+  const data = {account, networkName, contractProvider, contractSigner, isMetamaskInstalled, propertiesFromContext, connectWallet, getContract}
   return(
     <accountContext.Provider value = {data}>
       {children}

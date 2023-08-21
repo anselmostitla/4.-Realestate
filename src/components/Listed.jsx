@@ -8,7 +8,7 @@ import { BigNumber } from 'ethers';
 
 const Listed = () => {
   const {readHeader, getHeader, filter} = usePinataContext()
-  const { contractProvider, account } = useAccount()
+  const { contractProvider, account, propertiesFromContext } = useAccount()
 
   // const [listings, setListings] = useState([]);
   const [attempts, setAttempts] = useState(0);
@@ -20,6 +20,10 @@ const Listed = () => {
     loader()
     // eslint-disable-next-line
   },[attempts, account])
+
+  // useEffect(() => {
+  //   console.log("propertiesFromContext at listed: ", propertiesFromContext)
+  // },[])
 
 
   const getImageCIDFromIPFS = async() => {
@@ -64,16 +68,15 @@ const Listed = () => {
 
   const loader = async() => {
     setTimeout(async () => {
-      if(attempts === 0) await readFileFromIPFS()
+      // if(attempts === 0) await readFileFromIPFS()
+      if(attempts === 0) setProperties(propertiesFromContext)
       if(attempts === 16){
         // readFileFromIPFS()
         // setLoading(false)
       }  
       if(contractProvider!== undefined && contractProvider!==""){
-        console.log("contractProvider: ", contractProvider)  
         await getAllNFTs()
       }else if(attempts <= 15){
-        console.log("attempts: ", attempts)
         setAttempts(attempts+1)
       }
   
@@ -141,12 +144,10 @@ const Listed = () => {
         // </div>
       }
 
-      {
-        loading &&
-        <div className='text-center text-xl text-gray-500 py-20'>
-          Loading...
-        </div>
-      }
+
+      <div className={`${loading? 'flex':'invisible'} w-fit mx-auto text-center text-xl text-gray-500 py-5`}>
+        Loading...
+      </div>
 
 
       {/* <div className={`${msgMetamask==""? "text-white":"text-black"} text-5xl`}>Please Install Metamask</div>  */}

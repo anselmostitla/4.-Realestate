@@ -13,8 +13,9 @@ import Footer from './components/Footer';
 function App() {
   return (
 <div>
-  <AccountContextProvider>
-    <PinataContextProvider>
+  
+  <PinataContextProvider>
+    <AccountContextProvider>
       <NavBar />
 
       <Routes>
@@ -25,9 +26,8 @@ function App() {
       </Routes>
 
       <Footer />
-
-    </PinataContextProvider>    
-  </AccountContextProvider>
+    </AccountContextProvider>
+  </PinataContextProvider>    
 
 </div>
   );
