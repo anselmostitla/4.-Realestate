@@ -21,9 +21,9 @@ const Listed = () => {
     // eslint-disable-next-line
   },[attempts, account])
 
-  // useEffect(() => {
-  //   console.log("propertiesFromContext at listed: ", propertiesFromContext)
-  // },[])
+  useEffect(() => {
+    readFileFromIPFS()
+  },[])
 
 
   const getImageCIDFromIPFS = async() => {

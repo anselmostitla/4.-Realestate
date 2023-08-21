@@ -156,7 +156,8 @@ export const AccountContextProvider = ({children}) => {
     }
   }
 
-  const data = {account, networkName, contractProvider, contractSigner, isMetamaskInstalled, propertiesFromContext, connectWallet, getContract}
+  const data = {account, networkName, contractProvider, contractSigner, isMetamaskInstalled, propertiesFromContext, 
+    connectWallet, getContract, readFileFromIPFS}
   return(
     <accountContext.Provider value = {data}>
       {children}
